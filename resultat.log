@@ -1,0 +1,99 @@
+[SUPERVISOR pid=56689 ppid=53516 thread=main] començo
+
+=== stdinDemo: echo (stdin -> majúscules -> stdout) ===
+[SUPERVISOR pid=56689 ppid=53516 thread=main] he llançat ECHO (fill pid=56713)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] ECHO -> OK, codi=0, durada=68 ms (fill pid=56713, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] ECHO ordre: java ... echo echo
+  16:08:45.309 [ECHO pid=56713 ppid=56689 thread=main] inici
+  16:08:45.309 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de ECHO: EBRE
+  16:08:45.309 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de ECHO: PROCESSOS
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] el fill acaba bé
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] stdout només porta les dades
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] el diagnòstic va per stderr
+
+=== parallelDemo: 3 workers, màxim 2 alhora ===
+[SUPERVISOR pid=56689 ppid=53516 thread=pool-1-thread-1] he llançat WORKER-ALPHA (fill pid=56743)
+[SUPERVISOR pid=56689 ppid=53516 thread=pool-1-thread-2] he llançat WORKER-BETA (fill pid=56742)
+[SUPERVISOR pid=56689 ppid=53516 thread=pool-1-thread-2] he llançat WORKER-GAMMA (fill pid=56796)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-ALPHA -> OK, codi=0, durada=684 ms (fill pid=56743, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-ALPHA ordre: java ... echo worker ALPHA 3 200 0
+  16:08:45.402 [WORKER-ALPHA pid=56743 ppid=56689 thread=main] inici
+  16:08:45.408 [WORKER-ALPHA pid=56743 ppid=56689 thread=main] he rebut COUNT=2 CHARS=6
+  16:08:45.612 [WORKER-ALPHA pid=56743 ppid=56689 thread=main] pas 1/3
+  16:08:45.812 [WORKER-ALPHA pid=56743 ppid=56689 thread=main] pas 2/3
+  16:08:46.013 [WORKER-ALPHA pid=56743 ppid=56689 thread=main] pas 3/3
+  16:08:46.013 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de WORKER-ALPHA: COUNT=2 CHARS=6
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-BETA -> OK, codi=0, durada=683 ms (fill pid=56742, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-BETA ordre: java ... echo worker BETA 3 200 0
+  16:08:45.405 [WORKER-BETA pid=56742 ppid=56689 thread=main] inici
+  16:08:45.410 [WORKER-BETA pid=56742 ppid=56689 thread=main] he rebut COUNT=2 CHARS=8
+  16:08:45.613 [WORKER-BETA pid=56742 ppid=56689 thread=main] pas 1/3
+  16:08:45.813 [WORKER-BETA pid=56742 ppid=56689 thread=main] pas 2/3
+  16:08:46.013 [WORKER-BETA pid=56742 ppid=56689 thread=main] pas 3/3
+  16:08:46.013 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de WORKER-BETA: COUNT=2 CHARS=8
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-GAMMA -> OK, codi=0, durada=681 ms (fill pid=56796, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-GAMMA ordre: java ... echo worker GAMMA 3 200 0
+  16:08:46.089 [WORKER-GAMMA pid=56796 ppid=56689 thread=main] inici
+  16:08:46.094 [WORKER-GAMMA pid=56796 ppid=56689 thread=main] he rebut COUNT=1 CHARS=4
+  16:08:46.297 [WORKER-GAMMA pid=56796 ppid=56689 thread=main] pas 1/3
+  16:08:46.498 [WORKER-GAMMA pid=56796 ppid=56689 thread=main] pas 2/3
+  16:08:46.698 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de WORKER-GAMMA: COUNT=1 CHARS=4
+  16:08:46.699 [WORKER-GAMMA pid=56796 ppid=56689 thread=main] pas 3/3
+  TOTAL agregat: COUNT=5 CHARS=18
+  durada concurrent = 1378 ms; suma seqüencial = 2048 ms
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] agregació correcta: COUNT=5 CHARS=18
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] mai més de 2 workers alhora (màxim observat = 2)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] hi ha solapament real (concurrent < seqüencial)
+
+=== timeoutDemo: worker de 100 passos d'1 s amb límit de 2,5 s ===
+[SUPERVISOR pid=56689 ppid=53516 thread=main] he llançat WORKER-LENT (fill pid=56832)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-LENT -> TIMEOUT_GRACEFUL, codi=143, durada=2511 ms (fill pid=56832, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-LENT ordre: java ... echo worker LENT 100 1000 0
+  16:08:46.791 [WORKER-LENT pid=56832 ppid=56689 thread=main] inici
+  16:08:46.796 [WORKER-LENT pid=56832 ppid=56689 thread=main] he rebut COUNT=0 CHARS=0
+  16:08:47.799 [WORKER-LENT pid=56832 ppid=56689 thread=main] pas 1/100
+  16:08:48.800 [WORKER-LENT pid=56832 ppid=56689 thread=main] pas 2/100
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] causa registrada: TIMEOUT_GRACEFUL
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] el procés fill ja no és viu
+
+=== errorDemo: codi de sortida 7 i ordre inexistent ===
+[SUPERVISOR pid=56689 ppid=53516 thread=main] he llançat WORKER-BETA (fill pid=56895)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-BETA -> FAILED, codi=7, durada=379 ms (fill pid=56895, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] WORKER-BETA ordre: java ... echo worker BETA 3 100 7
+  16:08:49.308 [WORKER-BETA pid=56895 ppid=56689 thread=main] inici
+  16:08:49.314 [WORKER-BETA pid=56895 ppid=56689 thread=main] he rebut COUNT=1 CHARS=3
+  16:08:49.416 [WORKER-BETA pid=56895 ppid=56689 thread=main] pas 1/3
+  16:08:49.517 [WORKER-BETA pid=56895 ppid=56689 thread=main] pas 2/3
+  16:08:49.617 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de WORKER-BETA: COUNT=1 CHARS=3
+  16:08:49.617 [WORKER-BETA pid=56895 ppid=56689 thread=main] pas 3/3
+  16:08:49.619 [WORKER-BETA pid=56895 ppid=56689 thread=main] error simulat, surto amb codi 7
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] FAILED amb codi 7 explícit
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] l'error queda a stderr
+[SUPERVISOR pid=56689 ppid=53516 thread=main] INEXISTENT -> NOT_STARTED, codi=-1, durada=0 ms (fill pid=-1, ppid=-1)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] INEXISTENT ordre: aquesta-ordre-no-existeix
+  16:08:49.642 [SUPERVISOR pid=56689 ppid=53516 thread=main] stderr de INEXISTENT: Cannot run program "aquesta-ordre-no-existeix": Exec failed, error: 2 (El fitxer o directori no existeix) 
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] ordre inexistent -> NOT_STARTED
+
+=== pipeDemo: producer -> supervisor -> consumer ===
+[SUPERVISOR pid=56689 ppid=53516 thread=pool-2-thread-1] he llançat PRODUCER (fill pid=56924)
+[SUPERVISOR pid=56689 ppid=53516 thread=pool-2-thread-2] he llançat CONSUMER (fill pid=56925)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] PRODUCER -> OK, codi=0, durada=572 ms (fill pid=56924, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] PRODUCER ordre: java ... echo producer
+  16:08:49.699 [PRODUCER pid=56924 ppid=56689 thread=main] envio Ada
+  16:08:49.699 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de PRODUCER: Ada
+  16:08:49.800 [PRODUCER pid=56924 ppid=56689 thread=main] envio Pol
+  16:08:49.800 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de PRODUCER: Pol
+  16:08:49.900 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de PRODUCER: Joana
+  16:08:49.900 [PRODUCER pid=56924 ppid=56689 thread=main] envio Joana
+  16:08:50.001 [PRODUCER pid=56924 ppid=56689 thread=main] envio Nil
+  16:08:50.001 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de PRODUCER: Nil
+  16:08:50.101 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de PRODUCER: Marc
+  16:08:50.101 [PRODUCER pid=56924 ppid=56689 thread=main] envio Marc
+[SUPERVISOR pid=56689 ppid=53516 thread=main] CONSUMER -> OK, codi=0, durada=595 ms (fill pid=56925, ppid=56689)
+[SUPERVISOR pid=56689 ppid=53516 thread=main] CONSUMER ordre: java ... echo consumer
+  16:08:49.703 [CONSUMER pid=56925 ppid=56689 thread=main] espero dades per stdin
+  16:08:50.226 [SUPERVISOR pid=56689 ppid=53516 thread=main] stdout de CONSUMER: COUNT=5 CHARS=18
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] tots dos acaben bé
+[SUPERVISOR pid=56689 ppid=53516 thread=main] [OK] el consumer retorna COUNT=5 CHARS=18
+[SUPERVISOR pid=56689 ppid=53516 thread=main] acabo; comprovacions fallides = 0
+codi de sortida: 0

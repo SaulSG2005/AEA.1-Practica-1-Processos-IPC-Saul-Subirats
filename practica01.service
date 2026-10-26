@@ -1,0 +1,15 @@
+[Unit]
+Description=Supervisor multiproces Practica 01
+
+[Service]
+Type=oneshot
+User=alumnat
+WorkingDirectory=/home/alumne/practica01
+ExecStart=/usr/bin/java -jar /home/alumnat/Documents/Processos/Practica1/AEA.1-Practica-1-Saul-Subirats
+TimeoutStartSec=90s
+KillMode=control-group
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
